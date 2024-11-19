@@ -83,7 +83,7 @@ page2_stay = 6
 
 import random
 
-partner_names = ['RecAI']
+partner_names = ['AI']
 
 if 'partner_names' not in st.session_state:
     st.session_state.partner_names = None
@@ -291,7 +291,7 @@ if st.session_state.page == 0:
     # Automatically send a "hello" message when the chat begins
 
     # This is where we create a placeholder for the countdown timer
-    st.sidebar.markdown("Please start the conversation with EcoAI by typing :red[Hello] 👋 ", unsafe_allow_html=True)
+    st.sidebar.markdown("Please start the conversation with the chatbot by typing :red[Hello] 👋 ", unsafe_allow_html=True)
     st.sidebar.markdown("When the conversation ends, please copy the following thread ID and paste it into the text box below.", unsafe_allow_html=True)
 
     # st.sidebar.markdown("#### 请输入“:red[你好]”开启你们的讨论！👋 \n \n 请先开启对话以获取对话编号 \n")
@@ -370,7 +370,7 @@ if st.session_state.page == 0:
         current_dots (int): Current number of dots in the animation.
         """
         num_dots = (current_dots % 6) + 1  # Cycle through 1 to 3 dots
-        placeholder.markdown("Waiting for RecAI response" + "." * num_dots)
+        placeholder.markdown("Waiting for AI response" + "." * num_dots)
         return num_dots
     
 
@@ -540,7 +540,7 @@ if st.session_state.page == 0:
                             interval = int(duration / (1/gap)) + 1
                             for i in range(interval):
                                 num_dots = (i % 6) + 1  # Cycle through 1 to 3 dots
-                                placeholder.markdown("Waiting for RecAI response" + "." * num_dots)
+                                placeholder.markdown("Waiting for AI response" + "." * num_dots)
                                 time.sleep(gap)
                                 placeholder.empty()
                         
