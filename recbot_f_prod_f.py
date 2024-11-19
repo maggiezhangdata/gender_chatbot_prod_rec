@@ -76,7 +76,7 @@ print(assistant_id)
 speed = 200
 
 min_duration = 0
-max_duration = 10
+max_duration = 20
 human_speed = 80
 
 page2_stay = 6
@@ -592,7 +592,7 @@ if st.session_state.page == 0:
         st.empty()
 
     else:
-        # st.sidebar.info(st.session_state.thread_id)
+        st.sidebar.info(st.session_state.thread_id)
         if user_input := st.chat_input("", disabled=True):
             st.info("The time is up. Please copy the thread ID from the sidebar. Paste the thread ID into the text box below.")
             st.session_state.session_end = True
