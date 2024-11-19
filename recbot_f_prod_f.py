@@ -83,17 +83,17 @@ page2_stay = 6
 
 import random
 
-partner_names = ['AI']
+partner_names = 'Samantha'
 
 if 'partner_names' not in st.session_state:
     st.session_state.partner_names = None
 # random select a partner name
 
-if not st.session_state.partner_names:
-    partner_name = random.choice(partner_names)
-    st.session_state.partner_names = partner_name
+# if not st.session_state.partner_names:
+#     partner_name = random.choice(partner_names)
+#     st.session_state.partner_names = partner_name
     
-partner_name = st.session_state.partner_names
+# partner_name = st.session_state.partner_names
 
 if "session_end" not in st.session_state:
     st.session_state.session_end = False
@@ -120,7 +120,7 @@ if 'partner_avatar' not in st.session_state:
     st.session_state.partner_avatar = None
 
 if not st.session_state.partner_avatar:
-    st.session_state.partner_avatar = 'https://i.imgur.com/nTeWfNe.png'
+    st.session_state.partner_avatar = 'https://i.imgur.com/vks1TPC.png'
 
 partner_avatar = st.session_state.partner_avatar
 
@@ -291,7 +291,7 @@ if st.session_state.page == 0:
     # Automatically send a "hello" message when the chat begins
 
     # This is where we create a placeholder for the countdown timer
-    st.sidebar.markdown("Please start the conversation with the chatbot by typing :red[Hello] 👋 ", unsafe_allow_html=True)
+    st.sidebar.markdown("Please start the conversation with the chatbot by typing :red[Hello] 👋  <br><br><br><br><br><br><br>", unsafe_allow_html=True)
     st.sidebar.markdown("A thread ID will show up here after the AI finishes product recommendation. Please copy the thread ID and paste it into the text box below.", unsafe_allow_html=True)
 
     # st.sidebar.markdown("#### 请输入“:red[你好]”开启你们的讨论！👋 \n \n 请先开启对话以获取对话编号 \n")
@@ -344,7 +344,7 @@ if st.session_state.page == 0:
                 # st.markdown(message["content"], unsafe_allow_html=True)
                 
                 partner_input = message["content"]
-                st.markdown("<span style='color: red;'>" + partner_name + "：</span>" + partner_input, unsafe_allow_html=True)
+                st.markdown("<span style='color: red;'>" + partner_names + "：</span>" + partner_input, unsafe_allow_html=True)
                 
                 
 
@@ -370,7 +370,7 @@ if st.session_state.page == 0:
         current_dots (int): Current number of dots in the animation.
         """
         num_dots = (current_dots % 6) + 1  # Cycle through 1 to 3 dots
-        placeholder.markdown("Waiting for AI response" + "." * num_dots)
+        placeholder.markdown(f"Waiting for {partner_names} response" + "." * num_dots)
         return num_dots
     
 
@@ -544,7 +544,7 @@ if st.session_state.page == 0:
                             interval = int(duration / (1/gap)) + 1
                             for i in range(interval):
                                 num_dots = (i % 6) + 1  # Cycle through 1 to 3 dots
-                                placeholder.markdown("Waiting for AI response" + "." * num_dots)
+                                placeholder.markdown(f"Waiting for {partner_names} response" + "." * num_dots)
                                 time.sleep(gap)
                                 placeholder.empty()
                         
@@ -559,7 +559,7 @@ if st.session_state.page == 0:
                         
                         
                         
-                        message_placeholder.markdown("<span style='color: red;'>" + partner_name + "：</span>" + full_response, unsafe_allow_html=True)
+                        message_placeholder.markdown("<span style='color: red;'>" + partner_names + "：</span>" + full_response, unsafe_allow_html=True)
                         break
                     
                     
