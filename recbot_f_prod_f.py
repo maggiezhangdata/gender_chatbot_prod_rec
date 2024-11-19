@@ -132,7 +132,7 @@ if "thread_id" not in st.session_state:
     st.session_state.thread_id = thread.id
 
 if "show_thread_id" not in st.session_state:
-    st.session_state.show_thread_id = True
+    st.session_state.show_thread_id = False
 
 if 'first_message_sent' not in st.session_state:
     st.session_state.first_message_sent = False
@@ -292,11 +292,11 @@ if st.session_state.page == 0:
 
     # This is where we create a placeholder for the countdown timer
     st.sidebar.markdown("Please start the conversation with the chatbot by typing :red[Hello] 👋 ", unsafe_allow_html=True)
-    st.sidebar.markdown("When the conversation ends, please copy the following thread ID and paste it into the text box below.", unsafe_allow_html=True)
+    st.sidebar.markdown("A thread ID will show up here after the AI finishes product recommendation. Please copy the thread ID and paste it into the text box below.", unsafe_allow_html=True)
 
     # st.sidebar.markdown("#### 请输入“:red[你好]”开启你们的讨论！👋 \n \n 请先开启对话以获取对话编号 \n")
     thred_id_placeholder = st.sidebar.empty()
-    thred_id_placeholder.info(st.session_state.thread_id)
+    # thred_id_placeholder.info(st.session_state.thread_id)
     timer_placeholder = st.sidebar.empty()
     # timer_placeholder.markdown(f"##### 请先开启对话 ",unsafe_allow_html=True)
 
@@ -318,8 +318,8 @@ if st.session_state.page == 0:
             #         f"##### The chat will end in <strong><span style='color: #8B0000;'> {format_time(remaining_time)} </span></strong>.\n",
             #         unsafe_allow_html=True)
                 
-            if thread_id_remaining <= 0:
-                st.session_state.show_thread_id = True
+            # if thread_id_remaining <= 0:
+            #     st.session_state.show_thread_id = True
                 # st.sidebar.info(st.session_state.thread_id)
                 
 
@@ -388,9 +388,9 @@ if st.session_state.page == 0:
     if (not st.session_state.first_input_time) or (st.session_state.first_input_time and time.time() - st.session_state.first_input_time <= max_duration * 60):
         
         # if first_input_time is not None, check if the user has been inactive for more than 1 minute
-        if st.session_state.first_input_time:
-            if time.time() - st.session_state.first_input_time > min_duration * 60:
-                st.session_state.show_thread_id = True
+        # if st.session_state.first_input_time:
+        #     if time.time() - st.session_state.first_input_time > min_duration * 60:
+        #         st.session_state.show_thread_id = True
                 # st.sidebar.info(st.session_state.thread_id)
                 
             
@@ -500,6 +500,8 @@ if st.session_state.page == 0:
                                             "output": image_url
                                         })
                                         print(f'tool_outputs: {tool_outputs}')
+                                        # st.session_state.show_thread_id = True
+                                        st.sidebar.info(st.session_state.thread_id)
                                 if tool_outputs:
                                 
                                     openai.beta.threads.runs.submit_tool_outputs(
@@ -507,6 +509,8 @@ if st.session_state.page == 0:
                                         run_id=run.id,
                                         tool_outputs=tool_outputs
                                     )
+
+                                    
                             
                             elif run_status.status == "failed":
                                 full_response = "Sorry, I encountered an error. Please try again."
@@ -608,6 +612,8 @@ if st.session_state.page == 0:
 
 
     while True:
+        if st.session_state.show_thread_id:
+            thred_id_placeholder.info(st.session_state.thread_id)
         
         # thred_id_placeholder.info(st.session_state.thread_id)
         if st.session_state.session_end:
