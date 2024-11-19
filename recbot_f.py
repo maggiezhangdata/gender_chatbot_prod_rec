@@ -33,9 +33,36 @@ def generate_image(prompt, n:int=1, size:str="1024x1024"):
     # Download and display image using Streamlit
     im = Image.open(requests.get(image_url, stream=True).raw)
     # im.save("temp.png")
-    st.image(im, caption=prompt)
-
+    # st.image(im)
+    print(f'image_url: {image_url}')
     return image_url
+
+# def generate_image(prompt, n:int=1, size:str="1024x1024"):
+#     # Generate a smaller image from DALL-E
+#     response = openai.images.generate(
+#         model="dall-e-3",
+#         prompt=prompt,
+#         size="1024x1024",  # Keep standard size for quality
+#         quality="standard",
+#         n=1
+#     )
+
+#     image_url = response.data[0].url
+    
+#     # Download image
+#     im = Image.open(requests.get(image_url, stream=True).raw)
+    
+#     # Resize the image
+#     # Calculate new size while maintaining aspect ratio
+#     max_display_width = 400  # Set maximum width for display
+#     aspect_ratio = im.size[1] / im.size[0]  # height / width
+#     new_width = max_display_width
+#     new_height = int(max_display_width * aspect_ratio)
+    
+#     # Resize image using LANCZOS resampling for better quality
+#     im_resized = im.resize((new_width, new_height), Image.Resampling.LANCZOS)
+    
+#     return image_url, im_resized
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 # openai.base_url = "https://api.openai.com/v1/assistants"
@@ -44,7 +71,7 @@ openai.default_headers = {"OpenAI-Beta": "assistants=v2"}
 # # client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # client = OpenAI(default_headers={"OpenAI-Beta": "assistants=v2"}, api_key=st.secrets["OPENAI_API_KEY"])
-assistant_id = st.secrets["friction_without"]
+assistant_id = st.secrets["recbot_f_prod_f"]
 print(assistant_id)
 speed = 200
 
@@ -241,9 +268,9 @@ if st.session_state.page == 1:
 
 if st.session_state.page == 0:
     if "messages" not in st.session_state:
-        with st.chat_message("assistant", avatar=partner_avatar):
-            st.markdown("<span style='color: red;'>" + partner_name + "：</span>Welcome! I'm RecAI, your product recommendation assistant. How can I help you today?", unsafe_allow_html=True)
-            st.empty()
+        # with st.chat_message("assistant", avatar=partner_avatar):
+        #     st.markdown("<span style='color: red;'>" + partner_name + "：</span>Welcome! I'm RecAI, your product recommendation assistant. How can I help you today?", unsafe_allow_html=True)
+        #     st.empty()
         # st.session_state["messages"] = [
         #     {"role": "assistant", "content": "Welcome! I'm EcoAI, your sustainable creativity companion. How can I help you today?"}
         # ]
@@ -264,7 +291,7 @@ if st.session_state.page == 0:
     # Automatically send a "hello" message when the chat begins
 
     # This is where we create a placeholder for the countdown timer
-    # st.sidebar.markdown("Please start the conversation with EcoAI by typing :red[Hello] 👋 ", unsafe_allow_html=True)
+    st.sidebar.markdown("Please start the conversation with EcoAI by typing :red[Hello] 👋 ", unsafe_allow_html=True)
     st.sidebar.markdown("When the conversation ends, please copy the following thread ID and paste it into the text box below.", unsafe_allow_html=True)
 
     # st.sidebar.markdown("#### 请输入“:red[你好]”开启你们的讨论！👋 \n \n 请先开启对话以获取对话编号 \n")
@@ -472,16 +499,19 @@ if st.session_state.page == 0:
                                             "tool_call_id": tool_call.id,
                                             "output": image_url
                                         })
+                                        print(f'tool_outputs: {tool_outputs}')
+                                if tool_outputs:
                                 
-                                openai.beta.threads.runs.submit_tool_outputs(
-                                    thread_id=st.session_state.thread_id,
-                                    run_id=run.id,
-                                    tool_outputs=tool_outputs
-                                )
+                                    openai.beta.threads.runs.submit_tool_outputs(
+                                        thread_id=st.session_state.thread_id,
+                                        run_id=run.id,
+                                        tool_outputs=tool_outputs
+                                    )
                             
                             elif run_status.status == "failed":
                                 full_response = "Sorry, I encountered an error. Please try again."
-                                waiting_message.empty()
+                                if 'waiting_message' in locals():
+                                    waiting_message.empty()
                                 break
 
                             dots = update_typing_animation(waiting_message, dots)
@@ -489,6 +519,8 @@ if st.session_state.page == 0:
                         # Retrieve and display messages
                         messages = openai.beta.threads.messages.list(thread_id=st.session_state.thread_id)
                         full_response = messages.data[0].content[0].text.value
+
+                        print(f'full_response: {full_response}')
                         
                         def delay_display(text):
                             # calculate the number of characters in the text
