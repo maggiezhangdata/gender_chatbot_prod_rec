@@ -136,7 +136,7 @@ def generate_image(prompt, n:int=1, size:str="1024x1024"):
 
 
 partner_names = 'Samantha'
-partner_avatar = 'https://i.imgur.com/vks1TPC.png'
+partner_avatar = 'https://i.imgur.com/NDbPdLK.png'
 
 user_avatar = 'https://i.imgur.com/TJfjrkI.png'
 user_name = "You"
