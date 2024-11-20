@@ -283,7 +283,7 @@ if (not st.session_state.first_input_time) or (st.session_state.first_input_time
                     interval = int(duration / (1/gap)) + 1
                     for i in range(interval):
                         num_dots = (i % 6) + 1  # Cycle through 1 to 3 dots
-                        placeholder.markdown(f"Waiting for {partner_names} response" + "." * num_dots)
+                        placeholder.markdown(f"Waiting for {partner_names}'s response" + "." * num_dots)
                         time.sleep(gap)
                         placeholder.empty()
                 
