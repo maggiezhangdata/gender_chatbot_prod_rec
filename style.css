@@ -6,6 +6,10 @@ section[data-testid="stSidebar"] div.stButton button {
     font-size: 20px;
 }
 
+section[data-testid="stSidebar"] {
+    width: 10px !important;
+}
+
 
 div.stChatInputContainer {
     display: flex; /* Enable Flexbox */
