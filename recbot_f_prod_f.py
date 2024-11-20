@@ -21,8 +21,18 @@ i = 0
 
 
 import requests
+from PIL import Image
+from io import BytesIO
+import json
+
+import requests
 from concurrent.futures import ThreadPoolExecutor
 import base64
+from io import BytesIO
+
+import requests
+import base64
+from PIL import Image
 from io import BytesIO
 
 class QuickImgurUploader:
@@ -32,22 +42,35 @@ class QuickImgurUploader:
         self.headers = {'Authorization': f'Client-ID {client_id}'}
         self.upload_url = 'https://api.imgur.com/3/image'
 
-    def upload_image(self, dalle_url):
-        """Upload a single image from DALL-E URL to Imgur"""
+    def resize_image(self, image_bytes, size=(150, 150)):
+        """Resize the image to the specified size"""
         try:
-            # Handle if dalle_url is accidentally passed as a list
-            if isinstance(dalle_url, list):
-                dalle_url = dalle_url[0]
-                
-            # Download image from DALL-E
-            response = requests.get(dalle_url)
+            img = Image.open(BytesIO(image_bytes))
+            img_resized = img.resize(size)
+            buffer = BytesIO()
+            img_resized.save(buffer, format=img.format)
+            buffer.seek(0)
+            return buffer
+        except Exception as e:
+            print(f"Image resizing failed: {str(e)}")
+            return None
+
+    def upload_image(self, image_url):
+        """Upload a single image from a URL to Imgur after resizing"""
+        try:
+            # Download the image
+            response = requests.get(image_url)
             response.raise_for_status()
             
+            # Resize the image
+            resized_image = self.resize_image(response.content)
+            if not resized_image:
+                raise Exception("Failed to resize image")
+
+            # Prepare the image for upload
+            files = {'image': base64.b64encode(resized_image.getvalue())}
+
             # Upload to Imgur
-            files = {
-                'image': base64.b64encode(response.content)
-            }
-            
             imgur_response = requests.post(
                 self.upload_url,
                 headers=self.headers,
@@ -55,17 +78,19 @@ class QuickImgurUploader:
             )
             imgur_response.raise_for_status()
             
-            # Return just the URL for simplicity
+            # Return the Imgur URL
             return imgur_response.json()['data']['link']
-            
+
         except Exception as e:
             print(f"Upload failed: {str(e)}")
             return None
 
+# Replace with your actual Imgur client ID
 IMGUR_CLIENT_ID = '72939b1e567fb39'
 
 # Initialize uploader
 uploader = QuickImgurUploader(IMGUR_CLIENT_ID)
+
 
 def generate_image(prompt, n:int=1, size:str="1024x1024"):
     response = openai.images.generate(
@@ -76,24 +101,39 @@ def generate_image(prompt, n:int=1, size:str="1024x1024"):
         n=1
     )
 
-    image_url = response.data[0].url
-    print(f'image_url: {image_url}')
+    dalle_image_url = response.data[0].url
+    
+    print(f"Generated image URL: {dalle_image_url}")
 
-
-    imgur_url = uploader.upload_image(image_url)
+    # Upload the resized image to Imgur
+    imgur_url = uploader.upload_image(dalle_image_url)
 
     if imgur_url:
-        print(f"Success! Image URL: {imgur_url}")
+        print(f"Success! Image uploaded to Imgur: {imgur_url}")
     else:
-        print("Upload failed")
+        print("Image upload to Imgur failed")
 
-    # im = Image.open(requests.get(image_url, stream=True).raw)
-    im = None
-    # im.save("temp.png")
-    # st.image(im)
-    print(f'image_url: {image_url}')
-    print(f'-------- imgur_url: {imgur_url}')
-    return imgur_url, im
+
+    return imgur_url, None
+
+    # print(f'image_url: {image_url}')
+
+
+    # imgur_url = uploader.upload_image(image_url)
+
+    # if imgur_url:
+    #     print(f"Success! Image URL: {imgur_url}")
+    # else:
+    #     print("Upload failed")
+
+    # # im = Image.open(requests.get(image_url, stream=True).raw)
+    # im = None
+    # # im.save("temp.png")
+    # # st.image(im)
+    # print(f'image_url: {image_url}')
+    # print(f'-------- imgur_url: {imgur_url}')
+    # return imgur_url, im
+
 
 partner_names = 'Samantha'
 partner_avatar = 'https://i.imgur.com/vks1TPC.png'
