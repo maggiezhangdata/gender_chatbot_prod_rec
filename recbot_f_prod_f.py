@@ -149,7 +149,7 @@ init_session_state()
     
 
 
-st.sidebar.markdown("Please start the conversation with the chatbot by typing :red[Hello] 👋  <br><br><br><br><br><br><br>", unsafe_allow_html=True)
+st.sidebar.markdown("Please start the conversation with the chatbot by typing :red[Hello] 👋  <br><br>", unsafe_allow_html=True)
 st.sidebar.markdown("A thread ID will show up here after the AI finishes product recommendation. Please copy the thread ID and paste it into the text box below.", unsafe_allow_html=True)
 
 thred_id_placeholder = st.sidebar.empty()
