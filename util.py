@@ -3,20 +3,20 @@ import json
 import time
 from PIL import Image
 import streamlit as st
-from openai import OpenAI  # Updated import
+import openai
+import streamlit as st
+
 import requests
 
+
+
 def init_session_state():
+    
     if "session_end" not in st.session_state:
         st.session_state.session_end = False
 
     if "thread_id" not in st.session_state:
-        # Create a client instance properly
-        client = OpenAI(
-            api_key=st.secrets["OPENAI_API_KEY"],
-            default_headers={"OpenAI-Beta": "assistants=v2"}
-        )
-        thread = client.beta.threads.create()
+        thread = openai.beta.threads.create()
         st.session_state.thread_id = thread.id
 
     if "show_thread_id" not in st.session_state:
@@ -33,7 +33,6 @@ def init_session_state():
         
     if 'first_input_time' not in st.session_state:
         st.session_state.first_input_time = None
-        
     print(f'session duration: {st.session_state.duration}')
     
     if st.session_state.first_input_time:
