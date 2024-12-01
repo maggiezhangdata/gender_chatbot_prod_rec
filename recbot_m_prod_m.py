@@ -3,8 +3,13 @@ import urllib.parse
 
 st.subheader("")
 
-openai.api_key = st.secrets["OPENAI_API_KEY"]
-openai.default_headers = {"OpenAI-Beta": "assistants=v2"}
+# openai.api_key = st.secrets["OPENAI_API_KEY"]
+# openai.default_headers = {"OpenAI-Beta": "assistants=v2"}
+# assistant_id = st.secrets["recbot_m_prod_m"]
+from openai import OpenAI
+
+# Initialize the client with your API key
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 assistant_id = st.secrets["recbot_m_prod_m"]
 print(assistant_id)
 speed = 200
@@ -93,7 +98,7 @@ uploader = QuickImgurUploader(IMGUR_CLIENT_ID)
 
 
 def generate_image(prompt, n:int=1, size:str="1024x1024"):
-    response = openai.images.generate(
+    response = client.images.generate(
         model="dall-e-3",
         prompt=prompt,
         size=size,
@@ -196,8 +201,8 @@ if (not st.session_state.first_input_time) or (st.session_state.first_input_time
             
             try:
                 update_typing_animation(waiting_message, 5,partner_names)  # Update typing animation
-                message = openai.beta.threads.messages.create(thread_id=st.session_state.thread_id,role="user",content=user_input)
-                run = openai.beta.threads.runs.create(
+                message = client.beta.threads.messages.create(thread_id=st.session_state.thread_id,role="user",content=user_input)
+                run = client.beta.threads.runs.create(
                         thread_id=st.session_state.thread_id,
                         assistant_id=assistant_id,
                         tools=[{
@@ -218,7 +223,7 @@ if (not st.session_state.first_input_time) or (st.session_state.first_input_time
                     )
 
                 while True:
-                    run_status = openai.beta.threads.runs.retrieve(
+                    run_status = client.beta.threads.runs.retrieve(
                         thread_id=st.session_state.thread_id,
                         run_id=run.id
                     )
@@ -242,7 +247,7 @@ if (not st.session_state.first_input_time) or (st.session_state.first_input_time
                         if i >= rec_times:
                             st.sidebar.info(st.session_state.thread_id)
     
-                        openai.beta.threads.runs.submit_tool_outputs(
+                        client.beta.threads.runs.submit_tool_outputs(
                             thread_id=st.session_state.thread_id,
                             run_id=run.id,
                             tool_outputs=tool_outputs,
@@ -260,7 +265,7 @@ if (not st.session_state.first_input_time) or (st.session_state.first_input_time
                     # dots = update_typing_animation(waiting_message, dots,partner_names)
                     # time.sleep(0.3)
                 # Retrieve and display messages
-                messages = openai.beta.threads.messages.list(thread_id=st.session_state.thread_id)
+                messages = client.beta.threads.messages.list(thread_id=st.session_state.thread_id)
                 full_response = messages.data[0].content[0].text.value
 
                 print(f'full_response: {full_response}')
